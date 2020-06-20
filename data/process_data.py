@@ -10,11 +10,15 @@ def load_data(messages_filepath, categories_filepath):
     """
     This function loads data from two csv files and merges them into a single pandas dataframe.
     
-    Parameters:
-        messages_filepath, categories_filepath (strings) : path to the csv files
+    Parameters
+    ------------
+    messages_filepath, categories_filepath : str 
+             path to the csv files
         
-    Return:
-        merged_df : a pandas dataframe
+    Returns
+    -----------
+    merged_df : dataframe
+             a dataframe obtained from merging the two input data files
     
     """
    
@@ -31,11 +35,15 @@ def clean_data(df):
     """
     This function takes in a dataframe as an input and cleans data in that dataframe for future use.
     
-    Parameter:
-        df : the input dataframe
+    Parameter
+    -----------
+    df : dataframe
+      the input dataframe  
          
-    Return: 
-        cleaned_df : the dataframe after data cleaning
+    Returns
+    -----------
+    cleaned_df : dataframe after data cleaning
+       the dataframe after data cleaning 
          
     """
     
@@ -60,13 +68,20 @@ def save_data(df, database_filepath, table_name):
     """
     The function to save the cleaned dataframe in a SQL database.
     
-    Parameters:
-        df : the dataframe which is to be saved in the database
-        database_filepath (string) : the path to the database
-        table_name (string) : the name of the dataframe in the database
+    Parameters
+    ------------
+    df : dataframe
+        the dataframe which is to be saved in the database
+    
+    database_filepath : str 
+        the path to the database 
+    
+    table_name : str 
+        the name of the dataframe in the database
         
-    Return:
-        This funtion returns nothing 
+    Returns
+    ---------
+    None    
     
     """
     
@@ -79,7 +94,7 @@ def main():
     
     """
     The main function to load data, clean it and finally save the data into a SQL database.
-    
+   
     """
     if len(sys.argv) == 4:
 
@@ -107,6 +122,6 @@ def main():
               'disaster_messages.csv disaster_categories.csv '\
               'DisasterResponse.db')
 
-
-if __name__ == '__main__': # this will only be executed when this module is run directly
+# this will only be executed when this module is run directly
+if __name__ == '__main__': 
     main()

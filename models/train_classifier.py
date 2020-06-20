@@ -380,6 +380,6 @@ def main():
               'save the model to as the second argument. \n\nExample: python '\
               'train_classifier.py ../data/DisasterResponse.db classifier.pkl')
 
-
-if __name__ == '__main__': # this will only be executed when this module is run directly
+# this will only be executed when this module is run directly
+if __name__ == '__main__': 
     main()
