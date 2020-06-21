@@ -83,7 +83,7 @@ def text_to_word(text):
         
     """
     
-    word_list =  word_tokenize(re.sub(r"[^a-zA-Z0-9]", " ", input_text.lower()))
+    word_list =  word_tokenize(re.sub(r"[^a-zA-Z0-9]", " ", text.lower()))
     word_nostop_list = [word for word in word_list if word not in stopwords.words("english")]
     pos_dict = {"N":wordnet.NOUN, "J":wordnet.ADJ, "V":wordnet.VERB, "R":wordnet.ADV}
     
@@ -96,7 +96,7 @@ def text_to_word(text):
 
     return list(lemm_token_list)
 
-def FindTokenNumber(BaseEstimator, TransformerMixin):
+class FindTokenNumber(BaseEstimator, TransformerMixin):
     
     """
     A custom transformer to calculate the total number of tokens present after processing an input text.
@@ -192,7 +192,7 @@ def FindTokenNumber(BaseEstimator, TransformerMixin):
         return count_df
     
 
-def build_model(clf, param_dict):
+def build_model(clf, param_grid):
     
     """
     A function to build Pipeline and GridsearchCV objects. The pipeline object is built with the following steps:
@@ -207,8 +207,8 @@ def build_model(clf, param_dict):
     clf : a classifier object
        the classifier
          
-    param_dict : dictionary
-          keys of this dictionary are the parameters of the input classifier and values are lists of different values of these arameters over which grid search will be                   performed.
+    param_grid : dictionary
+          keys of this dictionary are the parameters of the input classifier and values are lists of different values of these arameters over             which grid search will be performed.
       
     Returns 
     ---------
@@ -221,12 +221,12 @@ def build_model(clf, param_dict):
     pipe = Pipeline([
             ('features', FeatureUnion([
                 ('tfidf', TfidfVectorizer(analyzer=text_to_word)),
-                ('token_count', FindTokenNumber(cleaning_func=text_to_word))
+                ('token_count', FindTokenNumber(text_to_word))
             ])),
             ('classifier', MultiOutputClassifier(clf))
            ])
     
-    grid_cv = GridSearchCV(pipe, param_grid=param_dict, cv=3, verbose=3)
+    grid_cv = GridSearchCV(pipe, param_grid, cv=3, verbose=3)
 
     return grid_cv
 
@@ -347,7 +347,7 @@ def main():
         
         print('Building model...')
         param_dict = {'classifier__estimator__alpha': [0.1, 0.5, 1.0]}
-        model = build_model(clf=MultinomialNB(), param_dict)
+        model = build_model(clf=MultinomialNB(), param_grid=param_dict)
         
         
         print('Training model...')
