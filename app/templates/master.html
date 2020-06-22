@@ -90,13 +90,37 @@ body, html {
         <div class="page-header">
             <h1 class="text-center">Overview of Training Dataset</h1>
         </div>
-    {% endblock %}
+    
 
-    {% for id in ids %}
+<!--    {% for id in ids %}
         <div id="{{id}}"></div>
-    {% endfor %}
+    {% endfor %}-->
+  <!-- top two plots-->
+  <div class='row'>
+    <div class='col-md-6'>
+       <div id={{ids[0]}}></div>         
+    </div>  
+    <div class='col-md-6'>
+       <div id={{ids[1]}}></div>         
+    </div>   
+    
+  <!-- bottom three plots-->
+  <div class='row'>
+    <div class='col-md-4'>
+       <div id={{ids[2]}}></div>         
+    </div>  
+    <div class='col-md-4'>
+       <div id={{ids[3]}}></div>         
+    </div>   
+    <div class='col-md-4'>
+       <div id={{ids[4]}}></div>         
+    </div>   
+  </div>  
+  <div style="clear:both"></div> 
+  
+  {% endblock %}
 </div>
-
+  
 <script type="text/javascript">
     const graphs = {{graphJSON | safe}};
     const ids = {{ids | safe}};
@@ -111,7 +135,7 @@ body, html {
     <h1>Contact</h1>
     <p class="marketing-byline w3-center">Let's get in touch</p>
  
-      <ul style="padding-left:650px; list-style: none">
+      <ul style="padding-left:300px; list-style: none">
         <li style="float: left; padding: 10px">
           <a href="https://github.com/nabanitarimpi">
           <img src="https://view6914b2f4.udacity-student-workspaces.com/files/home/workspace/Analysis-of-disaster-response/app/templates/assets/githublogo.png" alt="githublogo">

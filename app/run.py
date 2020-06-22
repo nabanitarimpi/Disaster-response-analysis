@@ -15,7 +15,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
 
 import plotly, json
-from plotly.graph_objs import Bar, go
+from plotly.graph_objs import Bar, Scatter
 from wordcloud import WordCloud, STOPWORDS
 
 nltk.download(['punkt', 'stopwords', 'wordnet', 'averaged_perceptron_tagger'])
@@ -154,16 +154,58 @@ class FindTokenNumber(BaseEstimator, TransformerMixin):
         return count_df
     
 
-def plotly_wordcloud(text):
+def plotly_wordcloud(text, category):
     
     """
     
     
     """
-    wc = WordCloud(stopwords=set(STOPWORDS), max_words=200, max_font_size=100)
-    wc.generate(text)
+    wc = WordCloud(stopwords=set(STOPWORDS), max_words=250, max_font_size=80)
+    wc.generate(" ".join(text))
+    
+    word_list, freq_list, color_list, position_list = [], [], [], []
     
 
+    for (word, freq), _, position, _, color in wc.layout_:
+        word_list.append(word)
+        freq_list.append(freq)
+        position_list.append(position)
+        color_list.append(color)
+        
+    x =[i[0] for i in position_list]
+    y =[i[1] for i in position_list]
+    new_freq_list = [(i * 100) for i in freq_list]
+    
+    graph = [Scatter(
+                     x = x,
+                     y = y,
+                     textfont = dict(size=new_freq_list,
+                                     color=color_list),
+                     hoverinfo='text',
+                     hovertext=['{0}{1}'.format(w, f) for w, f in zip(word_list, freq_list)],
+                     mode='text',  
+                     text=word_list
+                )]
+    
+    layout = {
+              'title' : "wordcloud for category "+category, 
+              'xaxis' : {
+                         'showgrid' : False,
+                         'showticklabels' : False,
+                         'zeroline' : False
+                        },
+              'yaxis' : {
+                         'showgrid' : False,
+                         'showticklabels' : False,
+                         'zeroline' : False
+                         },
+              'width' : 500,
+              'height' : 500
+              }
+    
+    return graph, layout 
+ 
+        
 # load the data from the database
 engine = create_engine("sqlite:///../data/DisasterResponse.db")
 df = pd.read_sql_table('disaster_response_df', engine)
@@ -176,6 +218,7 @@ model = joblib.load("../models/classifier.pkl")
 
 def index():
     
+    #graph 1
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
@@ -191,19 +234,131 @@ def index():
                             },
                   'yaxis' : {
                              'title' : 'Count'
-                            }
-    
+                            }, 
+                  'width' : 500,
+                  'height': 500
                  }
     
-    graph_two = [go.Scatter(
+    # graph 2
+    msg_length = df.message.apply(len)
+    genre_names = df.genre
+    
+    graph_two = [Bar(
+                   x = genre_names,
+                   y = msg_length
                 )]
     
     layout_two = {
+                  'title' : 'Distribution of message length as a function of genres',
+                  'xaxis' : {
+                             'title' : 'Genre'
+                            },
+                  'yaxis' : {
+                             'title' : 'Message length'
+                            }, 
+                  'width' : 500,
+                  'height': 500
                  }
+    
+    # graph 3
+    text = df[df['genre']=='direct']['message']
+    graph_three, layout_three = plotly_wordcloud(text, 'direct') 
+    graph_four, layout_four = plotly_wordcloud(text, 'news') 
+    graph_five, layout_five = plotly_wordcloud(text, 'social') 
+    
+ #   graph_three = [Scatter(
+ #                        x = x,
+ #                        y = y,
+ #                        textfont = dict(size=new_freq_list,
+ #                                      color=color_list),
+ #                        hoverinfo='text',
+ #                        hovertext=['{0}{1}'.format(w, f) for w, f in zip(word_list, freq_list)],
+ #                        mode='text',  
+ #                        text=word_list
+ #               )]
+    
+ #   layout_three = {
+ #                 'xaxis' : {
+ #                            'showgrid' : False,
+ #                            'showticklabels' : False,
+ #                            'zeroline' : False
+ #                           },
+ #                 'yaxis' : {
+ #                            'showgrid' : False,
+ #                            'showticklabels' : False,
+ #                            'zeroline' : False
+ #                           },
+ #                 'width' : 500,
+ #                 'height' : 500
+ #                 }
+
+    # graph 4
+  #  text = df[df['genre']=='news']['message']
+  #  x, y, word_list, freq_list, color_list, new_freq_list = plotly_wordcloud(text) 
+    
+  #  graph_four = [Scatter(
+  #                       x = x,
+  #                       y = y,
+  #                       textfont = dict(size=new_freq_list,
+  #                                     color=color_list),
+  #                       hoverinfo='text',
+  #                       hovertext=['{0}{1}'.format(w, f) for w, f in zip(word_list, freq_list)],
+  #                       mode='text',  
+  #                       text=word_list
+  #              )]
+    
+  #  layout_four = {
+  #                'xaxis' : {
+  #                           'showgrid' : False,
+  #                           'showticklabels' : False,
+  #                           'zeroline' : False
+  #                          },
+  #                'yaxis' : {
+  #                           'showgrid' : False,
+  #                           'showticklabels' : False,
+  #                           'zeroline' : False
+  #                          },
+  #                'width' : 500,
+  #                'height' : 500
+  #                }
+    
+    # graph 5
+  #  text = df[df['genre']=='social']['message']
+  #  x, y, word_list, freq_list, color_list, new_freq_list = plotly_wordcloud(text) 
+    
+  #  graph_five = [Scatter(
+  #                       x = x,
+  #                       y = y,
+  #                       textfont = dict(size=new_freq_list,
+  #                                     color=color_list),
+  #                       hoverinfo='text',
+  #                       hovertext=['{0}{1}'.format(w, f) for w, f in zip(word_list, freq_list)],
+  #                       mode='text',  
+  #                       text=word_list
+  #              )]
+    
+  #  layout_five = {
+  #                'xaxis' : {
+  #                           'showgrid' : False,
+  #                           'showticklabels' : False,
+  #                           'zeroline' : False
+  #                          },
+  #                'yaxis' : {
+  #                           'showgrid' : False,
+  #                           'showticklabels' : False,
+  #                           'zeroline' : False
+  #                          },
+  #                'width' : 500,
+  #                'height' : 500
+  #                }    
     
     graphs = []
     
     graphs.append(dict(data=graph_one, layout=layout_one))
+    graphs.append(dict(data=graph_two, layout=layout_two))
+    graphs.append(dict(data=graph_three, layout=layout_three))
+    graphs.append(dict(data=graph_four, layout=layout_four))
+    graphs.append(dict(data=graph_five, layout=layout_five))    
     
     ids = ['figure-{}'.format(i) for i, _ in enumerate(graphs)]
     graphJSON =  json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
