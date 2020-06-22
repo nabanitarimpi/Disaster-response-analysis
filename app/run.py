@@ -15,7 +15,10 @@ from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
 
 import plotly, json
-from plotly.graph_objs import Bar
+from plotly.graph_objs import Bar, go
+from wordcloud import WordCloud, STOPWORDS
+
+nltk.download(['punkt', 'stopwords', 'wordnet', 'averaged_perceptron_tagger'])
 
 
 app = Flask(__name__)
@@ -149,10 +152,23 @@ class FindTokenNumber(BaseEstimator, TransformerMixin):
         count_df = pd.DataFrame(X_len)
         
         return count_df
+    
 
+def plotly_wordcloud(text):
+    
+    """
+    
+    
+    """
+    wc = WordCloud(stopwords=set(STOPWORDS), max_words=200, max_font_size=100)
+    wc.generate(text)
+    
+
+# load the data from the database
 engine = create_engine("sqlite:///../data/DisasterResponse.db")
 df = pd.read_sql_table('disaster_response_df', engine)
 
+# load the model
 model = joblib.load("../models/classifier.pkl")
 
 @app.route('/')
@@ -177,6 +193,12 @@ def index():
                              'title' : 'Count'
                             }
     
+                 }
+    
+    graph_two = [go.Scatter(
+                )]
+    
+    layout_two = {
                  }
     
     graphs = []
