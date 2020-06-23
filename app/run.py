@@ -1,6 +1,8 @@
+# import packages from flask library
 from flask import Flask
 from flask import render_template, request
 
+# import packages for text processing
 import re
 import nltk
 from nltk import pos_tag
@@ -8,12 +10,13 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer
 
+# import packages for data loading and analysing
 from sqlalchemy import create_engine
 from sklearn.externals import joblib
 from sklearn.base import BaseEstimator, TransformerMixin
-
 import pandas as pd
 
+# import packages for visualisation
 import plotly, json
 from plotly.graph_objs import Bar, Scatter
 from wordcloud import WordCloud, STOPWORDS
@@ -35,12 +38,12 @@ def text_to_word(text):
     
     Parameter 
     -----------
-      text : str 
+    text : str 
         the input text to be cleaned
       
     Returns 
     ----------
-      lemm_token_list : list
+    lemm_token_list : list
              a list of tokens obtained after cleaning the text
         
     """
@@ -157,8 +160,24 @@ class FindTokenNumber(BaseEstimator, TransformerMixin):
 def plotly_wordcloud(text, category):
     
     """
+    A function to create visualisation of text data
     
-    
+    Parameters 
+    -------------
+    text : str 
+        the input text to be used for word cloud
+        
+    category : str
+        the category to which the input text belongs
+      
+    Returns 
+    ----------
+    graph : list
+       a collection of data and specifications for visualisation
+             
+    layout : list    
+       the plotly layout object
+         
     """
     wc = WordCloud(stopwords=set(STOPWORDS), max_words=250, max_font_size=80)
     wc.generate(" ".join(text))
@@ -213,11 +232,17 @@ df = pd.read_sql_table('disaster_response_df', engine)
 # load the model
 model = joblib.load("../models/classifier.pkl")
 
+
+# index webpage displays data visuals and receives user input text for model
 @app.route('/')
 @app.route('/index')
 
 def index():
     
+    """
+    A function to render the homepage and index webpage
+    
+    """
     #graph 1
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
@@ -266,92 +291,7 @@ def index():
     graph_four, layout_four = plotly_wordcloud(text, 'news') 
     graph_five, layout_five = plotly_wordcloud(text, 'social') 
     
- #   graph_three = [Scatter(
- #                        x = x,
- #                        y = y,
- #                        textfont = dict(size=new_freq_list,
- #                                      color=color_list),
- #                        hoverinfo='text',
- #                        hovertext=['{0}{1}'.format(w, f) for w, f in zip(word_list, freq_list)],
- #                        mode='text',  
- #                        text=word_list
- #               )]
-    
- #   layout_three = {
- #                 'xaxis' : {
- #                            'showgrid' : False,
- #                            'showticklabels' : False,
- #                            'zeroline' : False
- #                           },
- #                 'yaxis' : {
- #                            'showgrid' : False,
- #                            'showticklabels' : False,
- #                            'zeroline' : False
- #                           },
- #                 'width' : 500,
- #                 'height' : 500
- #                 }
-
-    # graph 4
-  #  text = df[df['genre']=='news']['message']
-  #  x, y, word_list, freq_list, color_list, new_freq_list = plotly_wordcloud(text) 
-    
-  #  graph_four = [Scatter(
-  #                       x = x,
-  #                       y = y,
-  #                       textfont = dict(size=new_freq_list,
-  #                                     color=color_list),
-  #                       hoverinfo='text',
-  #                       hovertext=['{0}{1}'.format(w, f) for w, f in zip(word_list, freq_list)],
-  #                       mode='text',  
-  #                       text=word_list
-  #              )]
-    
-  #  layout_four = {
-  #                'xaxis' : {
-  #                           'showgrid' : False,
-  #                           'showticklabels' : False,
-  #                           'zeroline' : False
-  #                          },
-  #                'yaxis' : {
-  #                           'showgrid' : False,
-  #                           'showticklabels' : False,
-  #                           'zeroline' : False
-  #                          },
-  #                'width' : 500,
-  #                'height' : 500
-  #                }
-    
-    # graph 5
-  #  text = df[df['genre']=='social']['message']
-  #  x, y, word_list, freq_list, color_list, new_freq_list = plotly_wordcloud(text) 
-    
-  #  graph_five = [Scatter(
-  #                       x = x,
-  #                       y = y,
-  #                       textfont = dict(size=new_freq_list,
-  #                                     color=color_list),
-  #                       hoverinfo='text',
-  #                       hovertext=['{0}{1}'.format(w, f) for w, f in zip(word_list, freq_list)],
-  #                       mode='text',  
-  #                       text=word_list
-  #              )]
-    
-  #  layout_five = {
-  #                'xaxis' : {
-  #                           'showgrid' : False,
-  #                           'showticklabels' : False,
-  #                           'zeroline' : False
-  #                          },
-  #                'yaxis' : {
-  #                           'showgrid' : False,
-  #                           'showticklabels' : False,
-  #                           'zeroline' : False
-  #                          },
-  #                'width' : 500,
-  #                'height' : 500
-  #                }    
-    
+    # store all the graph objects into one single list 
     graphs = []
     
     graphs.append(dict(data=graph_one, layout=layout_one))
@@ -360,31 +300,40 @@ def index():
     graphs.append(dict(data=graph_four, layout=layout_four))
     graphs.append(dict(data=graph_five, layout=layout_five))    
     
+    # encode plotly graphs in JSON
     ids = ['figure-{}'.format(i) for i, _ in enumerate(graphs)]
     graphJSON =  json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
     
-    
+    # render web page with plotly graphs
     return render_template('master.html', ids=ids, graphJSON=graphJSON)
 
 
+# web page that handles user query and displays model results
 @app.route('/go')
 
 def go():
     
+    """
+    A function to render the query web page
+    
+    """
+    # save user input in query
     query = request.args.get('query', '')
     
+    # use model to predict classification for query
     classification_labels = model.predict([query])[0]
     classification_result = dict(zip(df.columns[4:], classification_labels))
     
+    # This will render the go.html
     return render_template(
                           'go.html', 
                            query=query,
                            classification_result = classification_result
                            )
 
-def main():
-    app.run(host='0.0.0.0', port=3001, debug=True)
+#def main():
+#    app.run(host='0.0.0.0', port=3001, debug=True)
     
 
-if __name__ == "__main__":
-   main() 
+#if __name__ == "__main__":
+#   main() 
