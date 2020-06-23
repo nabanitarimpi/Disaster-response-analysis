@@ -304,7 +304,10 @@ def model_evaluation(pred_df, true_df, col_names, eval_score, average, score_nam
     score_dict = {}
     
     for column in col_names:
-        score = eval_score(y_true=true_df[column], y_pred=pred_df[column], average=average)
+        if column=='related': # the category with multiclass
+            score = eval_score(y_true=true_df[column], y_pred=pred_df[column], average=average)
+        else:
+            score = eval_score(y_true=true_df[column], y_pred=pred_df[column])
         score_dict[column] = score
         
     score_df = pd.DataFrame.from_dict(score_dict, columns=[score_name], orient='index')
