@@ -28,7 +28,15 @@ The following packages are required to run the code :
 
 - **wordcloud** (`pip install wordcloud`)
 
-If  you are using **anaconda virtual environment**, you can install the above packages by running `conda install <package-name>`.
+In order to be able to use nltk packages used in this code, open a python shell and run the following to download nltk data :
+
+1. import nltk
+
+2. nltk.download()
+
+A pop-up window will appear and then click on download.
+
+
 
 ## List of files
 
@@ -42,7 +50,7 @@ If  you are using **anaconda virtual environment**, you can install the above pa
 
 - _**train_classifier.py**_ : This file contains python code to build a ML pipeline, perform grid search for hyper-parameter fine-tuning, train the model, evaluate it and finally save the model.
 
-- _**classifier.pkl**_ : This is a pickle file which contains the trained model. One can load the model from this file for further analyses.
+- _**classifier.pkl**_ : This is a pickle file which stores the trained model.
 
 - _**run.py**_  :  The python file responsible for the back-end of the web app.
 
@@ -50,7 +58,6 @@ If  you are using **anaconda virtual environment**, you can install the above pa
 
 - _**go.html**_ : The html file that renders the result page of the web app where an emergency worker can enter a message and find out which category/categories the message belongs to.
 
-- _**Procfile, requirements.txt**_ : Files needed for the deployment of the app  to the Heroku server.
 
 ## About the dataset
 
@@ -108,10 +115,22 @@ From the table of average score, we see that our model, on average, has a precis
 
 ## Run the app
 
-To run the app locally on your machine, type `python run.py` in the terminal inside the app folder. Then you need to find the workspace environmental variables with `env | grep WORK`, open a new browser window and go to the address:
-`http://WORKSPACESPACEID-3001.WORKSPACEDOMAIN` replacing WORKSPACEID and WORKSPACEDOMAIN with your values.
+To run the app locally on your machine, follow the below steps:
 
+1. To run ETL pipeline that cleans data and stores in database
+
+     `python data/process_data.py data/disaster_messages.csv data/disaster_categories.csv data/DisasterResponse.db`
+
+2.  To run ML pipeline that trains classifier and saves
+
+    `python models/train_classifier.py data/DisasterResponse.db models/classifier.pkl`
+
+3. Run the following command in the app's directory to run your web app
+
+    `python run.py`
+
+ 4. Go to http://0.0.0.0:3001/
 
 ## External link
 
-To get a basic understanding of a multiclass multilabel classification, you can look at my article on [**Medium**](https://medium.com/analytics-vidhya/classifying-the-classifications-91db4e58fd0f).
+To get a basic understanding of a multiclass multilabel classification, you might look at my article on [**Medium**](https://medium.com/analytics-vidhya/classifying-the-classifications-91db4e58fd0f) and references therein.

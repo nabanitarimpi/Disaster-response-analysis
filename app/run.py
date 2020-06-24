@@ -12,7 +12,6 @@ from nltk.stem import WordNetLemmatizer
 
 # import packages for data loading and analysing
 from sqlalchemy import create_engine
-#from sklearn.externals import joblib
 import joblib
 from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
