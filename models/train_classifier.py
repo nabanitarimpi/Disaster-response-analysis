@@ -1,4 +1,4 @@
-# import necessary libraries
+## import necessary libraries
 
 import sys
 from sqlalchemy import create_engine
@@ -25,7 +25,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import precision_score, recall_score, f1_score
-from sklearn.externals import joblib
+#from sklearn.externals import joblib
+import joblib
 
 nltk.download(['punkt', 'stopwords', 'wordnet', 'averaged_perceptron_tagger'])
 

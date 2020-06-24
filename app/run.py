@@ -12,7 +12,8 @@ from nltk.stem import WordNetLemmatizer
 
 # import packages for data loading and analysing
 from sqlalchemy import create_engine
-from sklearn.externals import joblib
+#from sklearn.externals import joblib
+import joblib
 from sklearn.base import BaseEstimator, TransformerMixin
 import pandas as pd
 
@@ -21,8 +22,7 @@ import plotly, json
 from plotly.graph_objs import Bar, Scatter
 from wordcloud import WordCloud, STOPWORDS
 
-nltk.download(['punkt', 'stopwords', 'wordnet', 'averaged_perceptron_tagger'])
-
+#nltk.download(['punkt', 'stopwords', 'wordnet', 'averaged_perceptron_tagger'])
 
 app = Flask(__name__)
 
@@ -60,6 +60,7 @@ def text_to_word(text):
             pass
 
     return list(lemm_token_list)
+
 
 class FindTokenNumber(BaseEstimator, TransformerMixin):
     
@@ -155,7 +156,7 @@ class FindTokenNumber(BaseEstimator, TransformerMixin):
         count_df = pd.DataFrame(X_len)
         
         return count_df
-    
+
 
 def plotly_wordcloud(text, category):
     
@@ -223,15 +224,13 @@ def plotly_wordcloud(text, category):
               }
     
     return graph, layout 
- 
-        
+
 # load the data from the database
 engine = create_engine("sqlite:///../data/DisasterResponse.db")
 df = pd.read_sql_table('disaster_response_df', engine)
 
 # load the model
 model = joblib.load("../models/classifier.pkl")
-
 
 # index webpage displays data visuals and receives user input text for model
 @app.route('/')
@@ -307,7 +306,7 @@ def index():
     # render web page with plotly graphs
     return render_template('master.html', ids=ids, graphJSON=graphJSON)
 
-
+ 
 # web page that handles user query and displays model results
 @app.route('/go')
 
@@ -333,7 +332,7 @@ def go():
 
 def main():
     app.run(host='0.0.0.0', port=3001, debug=True)
-    
+
 # this will only be executed when this module is run directly
 if __name__ == "__main__":
-   main() 
+   main()     
