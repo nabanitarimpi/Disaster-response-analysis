@@ -331,9 +331,9 @@ def go():
                            classification_result = classification_result
                            )
 
-#def main():
-#    app.run(host='0.0.0.0', port=3001, debug=True)
+def main():
+    app.run(host='0.0.0.0', port=3001, debug=True)
     
-
-#if __name__ == "__main__":
-#   main() 
+# this will only be executed when this module is run directly
+if __name__ == "__main__":
+   main() 
