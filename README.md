@@ -133,4 +133,4 @@ To run the app locally on your machine, follow the below steps:
 
 ## External link
 
-To get a basic understanding of a multiclass multilabel classification, you might look at my article on [**Medium**](https://medium.com/analytics-vidhya/classifying-the-classifications-91db4e58fd0f) and references therein.
+The web app is publicly available on the [heroku cloud server](https://analyze-disaster-message.herokuapp.com/). To get a basic understanding of a multiclass multilabel classification, you might look at my article on [**Medium**](https://medium.com/analytics-vidhya/classifying-the-classifications-91db4e58fd0f) and references therein.
